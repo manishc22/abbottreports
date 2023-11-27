@@ -3,7 +3,7 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 import streamlit as st
-from functions.get_master_data import master_view
+from functions.get_master_data import master_view, total_count
 import numpy as np
 
 
@@ -49,7 +49,7 @@ with tab1:
 
     with col6:
         view = st.selectbox(
-            "Select View", ['Key Metrics', 'Data Tables', 'Trends'])
+            "Select View", ['Key Metrics', 'Data Tables'])
     st.divider()
 
     if (rm == 'Cumulative') and (program == 'All'):
@@ -64,6 +64,7 @@ with tab1:
     if rm != 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RMName'] == rm)]
+    count = total_count().values[0]
 
     if view == 'Key Metrics':
         col10, col11, col12, col13, col14 = st.columns(5, gap='small')
@@ -73,7 +74,7 @@ with tab1:
         # Total Forms Filled
         with col11:
             st.metric(
-                "**:blue[Total Forms Filled / Total Stores]**", df_filter.shape[0])
+                "**:blue[Total Audits]**", df_filter.shape[0])
     # Incorrect Position IDs
         with col12:
             st.metric("**:blue[Incorrect Position IDs]**",
@@ -95,6 +96,11 @@ with tab1:
         with col12:
             st.metric("**:blue[Bad Image Quality (%)]**",
                       image_quality)
+
+        with col13:
+            st.metric("**TOTAL FORMS FILLED**",
+                      count)
+
         st.divider()
         col10, col11, col12, col13, col14 = st.columns(5, gap='small')
 
@@ -180,7 +186,61 @@ with tab1:
         },
         )
 with tab2:
-    st.header("Dealerboard Reporting")
+    if 'counter' not in st.session_state:
+        st.session_state['counter'] = 0
+
+    counter = st.session_state.counter
+
+    rm_list = np.append(
+        ["Cumulative"], df_master['RMName'].drop_duplicates().to_numpy())
+
+    program_list = np.append(
+        ["All"], df_master['program_name'].drop_duplicates().to_numpy())
+
+    salesman = np.append(
+        ["All"], df_master['SalesmanName'].drop_duplicates().to_numpy())
+
+    asm = np.append(
+        ["All"], df_master['ASMName'].drop_duplicates().to_numpy())
+
+    col1, col2, col3, col4, col5, col6 = st.columns(
+        [0.5, 0.5, 1, 1, 1, 1])
+    with col1:
+        month = st.selectbox(
+            "Select Month", df_master['month'].drop_duplicates(), key=2.1)
+    with col2:
+        cycle = st.selectbox(
+            "Select Cycle", df_master['cycle'].drop_duplicates(), key=2.2)
+    with col3:
+        rm = st.selectbox(
+            "Select RM", rm_list, key=2.3)
+    with col4:
+        program = st.selectbox(
+            "Program Name", program_list, key=2.4)
+
+    # with col5:
+    #     asm = st.selectbox(
+    #         "Select ASM", asm, key=2.5)
+    st.divider()
+
+    if (rm == 'Cumulative') and (program == 'All'):
+        df_filter = df_master[(df_master['month'] == month)
+                              & (df_master['cycle'] == cycle)]
+    if rm != 'Cumulative' and program == 'All':
+        df_filter = df_master[(df_master['month'] == month)
+                              & (df_master['cycle'] == cycle) & (df_master['RMName'] == rm)]
+    if rm == 'Cumulative' and program != 'All':
+        df_filter = df_master[(df_master['month'] == month)
+                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program)]
+    if rm != 'Cumulative' and program != 'All':
+        df_filter = df_master[(df_master['month'] == month)
+                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RMName'] == rm)]
+    count = total_count().values[0]
+
+    col1, col2 = st.columns([1, 5], gap='large')
+    with col1:
+        st.checkbox("Selfie with Dealerboard")
+        df_new = df_filter[df_filter['selfie_dealerboard'] == True]
 
 with tab3:
     st.header("Window Visibility Reporting")

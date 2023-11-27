@@ -20,7 +20,19 @@ def master_view():
     engine = sql_engine()
     with engine.begin() as conn:
         sql = text(
-            """select * from master_view
+            """select * from master_view_new
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+    return data
+
+
+@st.cache_data(ttl=3600)
+def total_count():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select count(*) from store_audits
                """)
         data = pd.read_sql_query(
             sql, conn)
