@@ -15,7 +15,7 @@ def sql_engine():
     return engine
 
 
-@st.cache_data(ttl=7200)
+@st.cache_data(ttl=1800)
 def master_view():
     engine = sql_engine()
     with engine.begin() as conn:
@@ -27,7 +27,7 @@ def master_view():
     return data
 
 
-@st.cache_data(ttl=3600)
+@st.cache_data(ttl=1800)
 def total_count():
     engine = sql_engine()
     with engine.begin() as conn:
