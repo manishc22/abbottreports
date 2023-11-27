@@ -356,31 +356,23 @@ with tab3:
     with col1:
 
         image_quality = st.checkbox("Image Quality")
-        window_hotspot = st.checkbox("Window Hotspot")
-        st.caption("Pediasure")
-        p_window_exist = st.checkbox("Window Exist", key=1)
-        p_eye_level = st.checkbox("Eye Level", key=2)
-        p_backing_sheet = st.checkbox("Backing Sheet", key=3)
-        p_four_shelf = st.checkbox("4 Shelf Strip", key=4)
+        all_brands = st.checkbox("All Brands Available")
+        # st.caption("Pediasure")
+        # p_window_exist = st.checkbox("Window Exist", key=1)
+        # p_eye_level = st.checkbox("Eye Level", key=2)
+        # p_backing_sheet = st.checkbox("Backing Sheet", key=3)
+        # p_four_shelf = st.checkbox("4 Shelf Strip", key=4)
 
-        st.caption("Ensure")
-        e_window_exist = st.checkbox("Window Exist", key=5)
-        e_eye_level = st.checkbox("Eye Level", key=6)
-        e_backing_sheet = st.checkbox("Backing Sheet", key=7)
-        e_four_shelf = st.checkbox("4 Shelf Strip", key=8)
+        # st.caption("Ensure")
+        # e_window_exist = st.checkbox("Window Exist", key=5)
+        # e_eye_level = st.checkbox("Eye Level", key=6)
+        # e_backing_sheet = st.checkbox("Backing Sheet", key=7)
+        # e_four_shelf = st.checkbox("4 Shelf Strip", key=8)
 
         st.divider()
         df_new = df_filter[(df_filter['image_quality']
-                           == image_quality) & (df_filter['window_hotspot']
-                           == window_hotspot) & (df_filter['p_window_exist']
-                           == p_window_exist) & (df_filter['p_eye_level']
-                           == p_eye_level) & (df_filter['p_backing_sheet']
-                           == p_backing_sheet) & (df_filter['p_four_shelf_strip']
-                           == p_four_shelf) & (df_filter['e_window_exist']
-                           == e_window_exist) & (df_filter['e_eye_level']
-                           == e_eye_level) & (df_filter['e_backing_sheet']
-                           == e_backing_sheet) & (df_filter['e_four_shelf_strip']
-                           == e_four_shelf)].reset_index(drop=True)
+                           == image_quality) & (df_filter['all_brands']
+                           == all_brands)].reset_index(drop=True)
 
         salesman_list = np.append(
             ["All"], df_new['SalesmanName'].drop_duplicates().to_numpy())
