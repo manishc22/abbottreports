@@ -3,7 +3,7 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 import streamlit as st
-from functions.get_master_data import master_view, total_count
+from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms
 import numpy as np
 
 
@@ -20,14 +20,88 @@ st.set_page_config(page_title="Audit Reports",
 
 df_master = master_view()
 df_master.replace("", "None", inplace=True)
+df_audit_data = audit_data()
+df_audit_data.replace("", "None", inplace=True)
+
+df_overview = overview_data()
+df_overview.replace("", "None", inplace=True)
+
+df_daily = daily_forms()
+df_overview.loc['Total',
+                'Forms Received'] = str(int(df_overview['Forms Received'].sum()))
+df_overview.loc['Total',
+                'Images Audited'] = str(int(df_overview['Images Audited'].sum()))
+df_overview.loc['Total',
+                'Samrat'] = str(int(df_overview['Samrat'].sum()))
+df_overview.loc['Total',
+                'Yuvraj'] = str(int(df_overview['Yuvraj'].sum()))
+df_overview.loc['Total',
+                'None'] = str(int(df_overview['None'].sum()))
+
+df_audit_data.loc['Total',
+                  'Pediasure Window Visibility'] = str(int(df_audit_data['Pediasure Window Visibility'].sum()))
+df_audit_data.loc['Total',
+                  'Ensure Window Visibility'] = str(int(df_audit_data['Ensure Window Visibility'].sum()))
+df_audit_data.loc['Total',
+                  'All Brands Exist'] = str(int(df_audit_data['All Brands Exist'].sum()))
 
 # df_master = df_master['RMName'].replace('', np.nan, regex=True)
 
-tab1, tab2, tab3 = st.tabs(["Dashboard", "Dealerboard", "Window Visibility"])
+tab1, tab2, tab3, tab4 = st.tabs(
+    ["Overview", "Drilldowns", "Dealerboard", "Window Visibility"])
 with tab1:
 
-    rm_list = np.append(
-        ["Cumulative"], df_master['RMName'].drop_duplicates().to_numpy())
+    col1, col2, col3, col4, col5, col6 = st.columns(
+        [0.5, 0.5, 1, 0.75, 0.5, 1])
+    with col1:
+        month = st.selectbox(
+            "Select Month", df_master['month'].drop_duplicates(), key=0.1)
+    with col2:
+        cycle = st.selectbox(
+            "Select Cycle", df_master['cycle'].drop_duplicates(), key=0.2)
+    st.divider()
+
+    col1, col2 = st.columns(2)
+    with col1:
+
+        df_overview_f = df_overview[(df_overview['Month'] == month) & (
+            df_overview['Cycle'] == cycle)]
+        df_overview_f.loc['Total',
+                          'Forms Received'] = int(df_overview_f['Forms Received'].sum())
+        df_overview_f.loc['Total',
+                          'Images Audited'] = int(df_overview_f['Images Audited'].sum())
+        df_overview_f.loc['Total',
+                          'Samrat'] = int(df_overview_f['Samrat'].sum())
+        df_overview_f.loc['Total',
+                          'Yuvraj'] = int(df_overview_f['Yuvraj'].sum())
+        df_overview_f.loc['Total',
+                          'None'] = int(df_overview_f['None'].sum())
+        df_audit_f = df_audit_data[(df_audit_data['Month'] == month) & (
+            df_audit_data['Cycle'] == cycle)]
+
+        df_audit_f.loc['Total',
+                       'Pediasure Window Visibility'] = int(df_audit_f['Pediasure Window Visibility'].sum())
+        df_audit_f.loc['Total',
+                       'Ensure Window Visibility'] = int(df_audit_f['Ensure Window Visibility'].sum())
+        df_audit_f.loc['Total',
+                       'All Brands Exist'] = int(df_audit_f['All Brands Exist'].sum())
+        st.write("##### Overview")
+        st.dataframe(df_overview_f, column_config={
+                     "Month": None, "Cycle": None})
+        st.divider()
+    with col2:
+        st.write("##### Audit Summary")
+
+        st.dataframe(df_audit_f,  column_config={
+            "Month": None, "Cycle": None})
+        st.divider()
+    with col1:
+        st.write("##### Daily Forms filled")
+        st.line_chart(df_daily, x='created_at', y='total')
+with tab2:
+
+    region_list = np.append(
+        ["Cumulative"], df_master['RegionName'].drop_duplicates().to_numpy())
 
     program_list = np.append(
         ["All"], df_master['program_name'].drop_duplicates().to_numpy())
@@ -41,8 +115,8 @@ with tab1:
         cycle = st.selectbox(
             "Select Cycle", df_master['cycle'].drop_duplicates())
     with col3:
-        rm = st.selectbox(
-            "Select RM", rm_list)
+        region_list = st.selectbox(
+            "Select Region", region_list)
     with col4:
         program = st.selectbox(
             "Program Name", program_list)
@@ -52,18 +126,18 @@ with tab1:
             "Select View", ['Key Metrics', 'Data Tables'])
     st.divider()
 
-    if (rm == 'Cumulative') and (program == 'All'):
+    if (region_list == 'Cumulative') and (program == 'All'):
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle)]
-    if rm != 'Cumulative' and program == 'All':
+    if region_list != 'Cumulative' and program == 'All':
         df_filter = df_master[(df_master['month'] == month)
-                              & (df_master['cycle'] == cycle) & (df_master['RMName'] == rm)]
-    if rm == 'Cumulative' and program != 'All':
+                              & (df_master['cycle'] == cycle) & (df_master['RegionName'] == region_list)]
+    if region_list == 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle) & (df_master['program_name'] == program)]
-    if rm != 'Cumulative' and program != 'All':
+    if region_list != 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
-                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RMName'] == rm)]
+                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RegionName'] == region_list)]
     count = total_count().values[0]
 
     if view == 'Key Metrics':
@@ -185,7 +259,7 @@ with tab1:
 
         },
         )
-with tab2:
+with tab3:
     if 'counter' not in st.session_state:
         st.session_state['counter'] = 0
 
@@ -195,8 +269,8 @@ with tab2:
         print("RESET")
         st.session_state.counter = 0
 
-    rm_list = np.append(
-        ["Cumulative"], df_master['RMName'].drop_duplicates().to_numpy())
+    region_list = np.append(
+        ["Cumulative"], df_master['RegionName'].drop_duplicates().to_numpy())
 
     program_list = np.append(
         ["All"], df_master['program_name'].drop_duplicates().to_numpy())
@@ -210,26 +284,26 @@ with tab2:
         cycle = st.selectbox(
             "Select Cycle", df_master['cycle'].drop_duplicates(), key=2.2)
     with col3:
-        rm = st.selectbox(
-            "Select RM", rm_list, key=2.3)
+        region = st.selectbox(
+            "Select Region", region_list, key=2.3)
     with col4:
         program = st.selectbox(
             "Program Name", program_list, key=2.4)
 
     st.divider()
 
-    if (rm == 'Cumulative') and (program == 'All'):
+    if (region == 'Cumulative') and (program == 'All'):
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle)]
-    if rm != 'Cumulative' and program == 'All':
+    if region != 'Cumulative' and program == 'All':
         df_filter = df_master[(df_master['month'] == month)
-                              & (df_master['cycle'] == cycle) & (df_master['RMName'] == rm)]
-    if rm == 'Cumulative' and program != 'All':
+                              & (df_master['cycle'] == cycle) & (df_master['RegionName'] == region)]
+    if region == 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle) & (df_master['program_name'] == program)]
-    if rm != 'Cumulative' and program != 'All':
+    if region != 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
-                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RMName'] == rm)]
+                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RegionName'] == region)]
 
     col1, col2, col3 = st.columns([1, 0.25, 4], gap='large')
     with col1:
@@ -306,7 +380,7 @@ with tab2:
         else:
             st.write("No data available")
 
-with tab3:
+with tab4:
     if 'win_counter' not in st.session_state:
         st.session_state['win_counter'] = 0
 
@@ -316,8 +390,8 @@ with tab3:
     #     print("RESET")
     #     st.session_state.counter = 0
 
-    rm_list = np.append(
-        ["Cumulative"], df_master['RMName'].drop_duplicates().to_numpy())
+    region_list = np.append(
+        ["Cumulative"], df_master['RegionName'].drop_duplicates().to_numpy())
 
     program_list = np.append(
         ["All"], df_master['program_name'].drop_duplicates().to_numpy())
@@ -331,26 +405,26 @@ with tab3:
         cycle = st.selectbox(
             "Select Cycle", df_master['cycle'].drop_duplicates(), key=3.2)
     with col3:
-        rm = st.selectbox(
-            "Select RM", rm_list, key=3.3)
+        region = st.selectbox(
+            "Select RM", region_list, key=3.3)
     with col4:
         program = st.selectbox(
             "Program Name", program_list, key=3.4)
 
     st.divider()
 
-    if (rm == 'Cumulative') and (program == 'All'):
+    if (region == 'Cumulative') and (program == 'All'):
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle)]
-    if rm != 'Cumulative' and program == 'All':
+    if region != 'Cumulative' and program == 'All':
         df_filter = df_master[(df_master['month'] == month)
-                              & (df_master['cycle'] == cycle) & (df_master['RMName'] == rm)]
-    if rm == 'Cumulative' and program != 'All':
+                              & (df_master['cycle'] == cycle) & (df_master['RegionName'] == region)]
+    if region == 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle) & (df_master['program_name'] == program)]
-    if rm != 'Cumulative' and program != 'All':
+    if region != 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
-                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RMName'] == rm)]
+                              & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RegionName'] == region)]
 
     col1, col2, col3 = st.columns([1, 0.25, 4], gap='large')
     with col1:
