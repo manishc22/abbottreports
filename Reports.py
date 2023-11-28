@@ -406,7 +406,7 @@ with tab4:
             "Select Cycle", df_master['cycle'].drop_duplicates(), key=3.2)
     with col3:
         region = st.selectbox(
-            "Select RM", region_list, key=3.3)
+            "Select Region", region_list, key=3.3)
     with col4:
         program = st.selectbox(
             "Program Name", program_list, key=3.4)
