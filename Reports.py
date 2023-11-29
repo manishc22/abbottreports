@@ -61,7 +61,7 @@ with tab1:
             "Select Cycle", df_master['cycle'].drop_duplicates(), key=0.2)
     st.divider()
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 2], gap='large')
     with col1:
 
         df_overview_f = df_overview[(df_overview['Month'] == month) & (
@@ -80,11 +80,19 @@ with tab1:
             df_audit_data['Cycle'] == cycle)]
 
         df_audit_f.loc['Total',
+                       'Forms Received'] = int(df_audit_f['Forms Received'].sum())
+        df_audit_f.loc['Total',
                        'Pediasure Window Visibility'] = int(df_audit_f['Pediasure Window Visibility'].sum())
         df_audit_f.loc['Total',
                        'Ensure Window Visibility'] = int(df_audit_f['Ensure Window Visibility'].sum())
         df_audit_f.loc['Total',
                        'All Brands Exist'] = int(df_audit_f['All Brands Exist'].sum())
+        df_audit_f.loc['Total',
+                       'Good Image Quality'] = int(df_audit_f['Good Image Quality'].sum())
+        df_audit_f.loc['Total',
+                       'Selfie with Dealerboard'] = int(df_audit_f['Selfie with Dealerboard'].sum())
+        df_audit_f.loc['Total',
+                       'Stores not in DB'] = int(df_audit_f['Stores not in DB'].sum())
         st.write("##### Overview")
         st.dataframe(df_overview_f, hide_index=True, column_config={
                      "Month": None, "Cycle": None})
