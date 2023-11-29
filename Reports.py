@@ -5,7 +5,7 @@ import os
 import streamlit as st
 from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms
 import numpy as np
-
+import altair as alt
 
 load_dotenv()
 
@@ -86,18 +86,24 @@ with tab1:
         df_audit_f.loc['Total',
                        'All Brands Exist'] = int(df_audit_f['All Brands Exist'].sum())
         st.write("##### Overview")
-        st.dataframe(df_overview_f, column_config={
+        st.dataframe(df_overview_f, hide_index=True, column_config={
                      "Month": None, "Cycle": None})
         st.divider()
     with col2:
         st.write("##### Audit Summary")
 
-        st.dataframe(df_audit_f,  column_config={
+        st.dataframe(df_audit_f,  hide_index=True, column_config={
             "Month": None, "Cycle": None})
         st.divider()
     with col1:
-        st.write("##### Daily Forms filled")
-        st.line_chart(df_daily, x='created_at', y='total')
+
+        chart = alt.Chart(df_daily, title='Daily Forms Filled').mark_bar().encode(
+            x=alt.X('created_at', sort=None, title='Date'),
+            y=alt.Y('total',
+                    title='Total Forms'),
+        )
+        st.altair_chart(chart,  use_container_width=True)
+        # st.line_chart(df_daily, x='created_at', y='total')
 with tab2:
 
     region_list = np.append(

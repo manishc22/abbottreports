@@ -3,3 +3,4 @@ supabase
 python-dotenv
 sqlalchemy
 psycopg2
+altair
