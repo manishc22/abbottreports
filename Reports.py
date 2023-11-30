@@ -80,7 +80,7 @@ with tab1:
             df_audit_data['Cycle'] == cycle)]
 
         df_audit_f.loc['Total',
-                       'Forms Received'] = int(df_audit_f['Forms Received'].sum())
+                       'Audited'] = int(df_audit_f['Audited'].sum())
         df_audit_f.loc['Total',
                        'Pediasure Window Visibility'] = int(df_audit_f['Pediasure Window Visibility'].sum())
         df_audit_f.loc['Total',

@@ -24,6 +24,7 @@ def master_view():
                """)
         data = pd.read_sql_query(
             sql, conn)
+        conn.close()
     return data
 
 
@@ -36,6 +37,7 @@ def total_count():
                """)
         data = pd.read_sql_query(
             sql, conn)
+        conn.close()
     return data
 
 
@@ -48,6 +50,7 @@ def overview_data():
                """)
         data = pd.read_sql_query(
             sql, conn)
+        conn.close()
     return data
 
 
@@ -60,6 +63,7 @@ def audit_data():
                """)
         data = pd.read_sql_query(
             sql, conn)
+        conn.close()
     return data
 
 
@@ -72,4 +76,5 @@ def daily_forms():
                """)
         data = pd.read_sql_query(
             sql, conn)
+        conn.close()
     return data
