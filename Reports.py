@@ -152,105 +152,108 @@ with tab2:
     if region_list != 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RegionName'] == region_list)]
-    count = total_count().values[0]
+    if df_filter.shape[0] > 0:
+        count = total_count().values[0]
 
-    if view == 'Key Metrics':
-        col10, col11, col12, col13, col14 = st.columns(5, gap='small')
-        with col10:
-            st.write("### *Overview*")
-        # print(df_filter[df_filter['RMName'] == ''])
-        # Total Forms Filled
-        with col11:
-            st.metric(
-                "**:blue[Total Audits]**", df_filter.shape[0])
-    # Incorrect Position IDs
-        with col12:
-            st.metric("**:blue[Incorrect Position IDs]**",
-                      df_filter[df_filter['RMName'] == 'None'].shape[0])
-    # Stores not in Master DB
-        with col13:
-            st.metric("**:blue[Stores not in Master DB]**",
-                      df_filter[df_filter['store_name_updated'] == 'None'].shape[0])
+        if view == 'Key Metrics':
+            col10, col11, col12, col13, col14 = st.columns(5, gap='small')
+            with col10:
+                st.write("### *Overview*")
+            # print(df_filter[df_filter['RMName'] == ''])
+            # Total Forms Filled
+            with col11:
+                st.metric(
+                    "**:blue[Total Audits]**", df_filter.shape[0])
+        # Incorrect Position IDs
+            with col12:
+                st.metric("**:blue[Incorrect Position IDs]**",
+                          df_filter[df_filter['RMName'] == 'None'].shape[0])
+        # Stores not in Master DB
+            with col13:
+                st.metric("**:blue[Stores not in Master DB]**",
+                          df_filter[df_filter['store_name_updated'] == 'None'].shape[0])
 
-    # Selfie with Dealerboard (%)
-        with col11:
-            selfie = round(df_filter[df_filter['selfie_dealerboard']
-                           == True].shape[0] * 100 / df_filter.shape[0], 1)
-            st.metric("**:blue[Selfie with Dealerboard (%)]**",
-                      selfie)
-    # Bad Image Quality (%)
-            image_quality = round(df_filter[df_filter['image_quality']
-                                            == False].shape[0] * 100 / df_filter.shape[0], 1)
-        with col12:
-            st.metric("**:blue[Bad Image Quality (%)]**",
-                      image_quality)
+        # Selfie with Dealerboard (%)
+            with col11:
+                selfie = round(df_filter[df_filter['selfie_dealerboard']
+                                         == True].shape[0] * 100 / df_filter.shape[0], 1)
+                st.metric("**:blue[Selfie with Dealerboard (%)]**",
+                          selfie)
+        # Bad Image Quality (%)
+                image_quality = round(df_filter[df_filter['image_quality']
+                                                == False].shape[0] * 100 / df_filter.shape[0], 1)
+            with col12:
+                st.metric("**:blue[Bad Image Quality (%)]**",
+                          image_quality)
 
-        with col13:
-            st.metric("**TOTAL FORMS FILLED**",
-                      count)
+            with col13:
+                st.metric("**TOTAL FORMS FILLED**",
+                          count)
 
-        st.divider()
-        col10, col11, col12, col13, col14 = st.columns(5, gap='small')
+            st.divider()
+            col10, col11, col12, col13, col14 = st.columns(5, gap='small')
 
-        with col10:
-            st.write("### *Pediasure*")
+            with col10:
+                st.write("### *Pediasure*")
 
-    # Window Visibility Pediasure (%)
-        window_viz_ps = round(df_filter[df_filter['p_window_exist']
-                                        == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col11:
-            st.metric("**:blue[Window Visibility (%)]**",
-                      window_viz_ps)
+        # Window Visibility Pediasure (%)
+            window_viz_ps = round(df_filter[df_filter['p_window_exist']
+                                            == True].shape[0] * 100 / df_filter.shape[0], 1)
+            with col11:
+                st.metric("**:blue[Window Visibility (%)]**",
+                          window_viz_ps)
 
-    # Pediasure 4 shelf strip
-        ps_shelf = round(df_filter[df_filter['p_four_shelf_strip']
-                                   == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col12:
-            st.metric("**:blue[4 Shelf Strip (%)]**",
-                      ps_shelf)
-    # Pediasure Eye Level
-        ps_eye_level = round(df_filter[df_filter['p_eye_level']
+        # Pediasure 4 shelf strip
+            ps_shelf = round(df_filter[df_filter['p_four_shelf_strip']
                                        == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col13:
-            st.metric("**:blue[Eye Level (%)]**",
-                      ps_eye_level)
+            with col12:
+                st.metric("**:blue[4 Shelf Strip (%)]**",
+                          ps_shelf)
+        # Pediasure Eye Level
+            ps_eye_level = round(df_filter[df_filter['p_eye_level']
+                                           == True].shape[0] * 100 / df_filter.shape[0], 1)
+            with col13:
+                st.metric("**:blue[Eye Level (%)]**",
+                          ps_eye_level)
 
-        ps_backing = round(df_filter[df_filter['p_backing_sheet']
-                                     == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col14:
-            st.metric("**:blue[Backing Sheet (%)]**",
-                      ps_backing)
+            ps_backing = round(df_filter[df_filter['p_backing_sheet']
+                                         == True].shape[0] * 100 / df_filter.shape[0], 1)
+            with col14:
+                st.metric("**:blue[Backing Sheet (%)]**",
+                          ps_backing)
 
-        st.divider()
-        col10, col11, col12, col13, col14 = st.columns(5, gap='small')
+            st.divider()
+            col10, col11, col12, col13, col14 = st.columns(5, gap='small')
 
-        with col10:
-            st.write("### *Ensure*")
+            with col10:
+                st.write("### *Ensure*")
 
-        window_viz_es = round(df_filter[df_filter['e_window_exist']
-                                        == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col11:
-            st.metric("**:blue[Window Visibility (%)]**",
-                      window_viz_es)
+            window_viz_es = round(df_filter[df_filter['e_window_exist']
+                                            == True].shape[0] * 100 / df_filter.shape[0], 1)
+            with col11:
+                st.metric("**:blue[Window Visibility (%)]**",
+                          window_viz_es)
 
-    # Pediasure 4 shelf strip
-        es_shelf = round(df_filter[df_filter['e_four_shelf_strip']
-                                   == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col12:
-            st.metric("**:blue[4 Shelf Strip (%)]**",
-                      es_shelf)
-    # Pediasure Eye Level
-        es_eye_level = round(df_filter[df_filter['e_eye_level']
+        # Pediasure 4 shelf strip
+            es_shelf = round(df_filter[df_filter['e_four_shelf_strip']
                                        == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col13:
-            st.metric("**:blue[Eye Level (%)]**",
-                      es_eye_level)
+            with col12:
+                st.metric("**:blue[4 Shelf Strip (%)]**",
+                          es_shelf)
+        # Pediasure Eye Level
+            es_eye_level = round(df_filter[df_filter['e_eye_level']
+                                           == True].shape[0] * 100 / df_filter.shape[0], 1)
+            with col13:
+                st.metric("**:blue[Eye Level (%)]**",
+                          es_eye_level)
 
-        es_backing = round(df_filter[df_filter['e_backing_sheet']
-                                     == True].shape[0] * 100 / df_filter.shape[0], 1)
-        with col14:
-            st.metric("**:blue[Backing Sheet (%)]**",
-                      es_backing)
+            es_backing = round(df_filter[df_filter['e_backing_sheet']
+                                         == True].shape[0] * 100 / df_filter.shape[0], 1)
+            with col14:
+                st.metric("**:blue[Backing Sheet (%)]**",
+                          es_backing)
+    else:
+        st.write("#### No Data Available")
     # Window Visibility Ensure (%)
     # Ensure 4 shelf strip
     # Ensure Eye Level
@@ -439,12 +442,12 @@ with tab4:
     if region != 'Cumulative' and program != 'All':
         df_filter = df_master[(df_master['month'] == month)
                               & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RegionName'] == region)]
-
+    # print(df_master)
     col1, col2, col3 = st.columns([1, 0.25, 4], gap='large')
     with col1:
 
-        image_quality = st.checkbox("Image Quality")
-        all_brands = st.checkbox("All Brands Available")
+        # image_quality = st.checkbox("Image Quality")
+        # all_brands = st.checkbox("All Brands Available")
         # st.caption("Pediasure")
         # p_window_exist = st.checkbox("Window Exist", key=1)
         # p_eye_level = st.checkbox("Eye Level", key=2)
@@ -457,24 +460,25 @@ with tab4:
         # e_backing_sheet = st.checkbox("Backing Sheet", key=7)
         # e_four_shelf = st.checkbox("4 Shelf Strip", key=8)
 
-        st.divider()
-        df_new = df_filter[(df_filter['image_quality']
-                           == image_quality) & (df_filter['all_brands']
-                           == all_brands)].reset_index(drop=True)
+        # st.divider()
+        # df_new = df_filter[(df_filter['image_quality']
+        #                    == image_quality) & (df_filter['all_brands']
+        #                    == all_brands)].reset_index(drop=True)
 
         salesman_list = np.append(
-            ["All"], df_new['SalesmanName'].drop_duplicates().to_numpy())
+            ["All"], df_filter['SalesmanName'].drop_duplicates().to_numpy())
 
         asm_list = np.append(
-            ["All"], df_new['ASMName'].drop_duplicates().to_numpy())
+            ["All"], df_filter['ASMName'].drop_duplicates().to_numpy())
 
         asm = st.selectbox(
             "Select ASM", asm_list, key=3.5)
 
         if asm == "All":
-            df_final = df_new
+            df_final = df_filter.reset_index(drop=True)
         else:
-            df_final = df_new[df_new['ASMName'] == asm].reset_index(drop=True)
+            df_final = df_filter[df_filter['ASMName']
+                                 == asm].reset_index(drop=True)
         # salesman = st.selectbox(
         #     "Select Salesman", salesman_list, key=2.6)
 
