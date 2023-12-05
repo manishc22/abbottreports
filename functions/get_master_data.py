@@ -38,6 +38,8 @@ def total_count():
         data = pd.read_sql_query(
             sql, conn)
         conn.close()
+        st.session_state.counter = 0
+        st.session_state.win_counter = 0
     return data
 
 

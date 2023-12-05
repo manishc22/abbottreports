@@ -479,6 +479,25 @@ with tab4:
         else:
             df_final = df_filter[df_filter['ASMName']
                                  == asm].reset_index(drop=True)
+        st.divider()
+        total_p_window = df_final[df_final['p_window_exist']
+                                  == True]['p_window_exist'].sum()
+        total_e_window = df_final[df_final['e_window_exist']
+                                  == True]['e_window_exist'].sum()
+        total_p_brand = df_final[df_final['p_backing_sheet']
+                                 == True]['p_backing_sheet'].sum()
+        total_e_brand = df_final[df_final['e_backing_sheet']
+                                 == True]['e_backing_sheet'].sum()
+
+        st.write(
+            f"###### Total Window Exists (Pediasure): {total_p_window}")
+        st.write(
+            f"###### Total Window Exists (Ensure): {total_e_window}")
+        st.write(
+            f"###### Total Brand Block (Pediasure): {total_p_brand}")
+        st.write(
+            f"###### Total Brand Block (Ensure): {total_e_brand}")
+
         # salesman = st.selectbox(
         #     "Select Salesman", salesman_list, key=2.6)
 
@@ -486,17 +505,18 @@ with tab4:
 
         if df_final.shape[0] > 0:
             total_images = df_final.shape[0]
-
+            print(df_final)
             col11, col12, col13, col14, col15 = st.columns(
                 [1, 3, 1, 1, 1], gap='small')
             with col11:
+                id = df_final.loc[counter, 'id']
+                st.write(f"##### ID: {id}")
                 st.write(
                     f"##### Image Number: {st.session_state.win_counter + 1} of {total_images}")
 
                 df_final.loc[counter, 'created_at'] = pd.to_datetime(
                     df_final.loc[counter, 'created_at']) + pd.Timedelta('05:30:00')
 
-            id = df_final.loc[counter, 'id']
             position_id = df_final.loc[counter, 'position_id']
             image = df_final.loc[counter, 'image2_id']
 
