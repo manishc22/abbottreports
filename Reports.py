@@ -3,7 +3,7 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 import streamlit as st
-from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms
+from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms, sales_team, sales_count
 import numpy as np
 import altair as alt
 
@@ -47,8 +47,8 @@ df_audit_data.loc['Total',
 
 # df_master = df_master['RMName'].replace('', np.nan, regex=True)
 
-tab1, tab2, tab3, tab4 = st.tabs(
-    ["Overview", "Drilldowns", "Dealerboard", "Window Visibility"])
+tab1, tab2, tab3, tab4, tab5 = st.tabs(
+    ["Overview", "Sales Team Adoption", "Drilldowns", "Dealerboard", "Window Visibility"])
 with tab1:
 
     col1, col2, col3, col4, col5, col6 = st.columns(
@@ -112,7 +112,38 @@ with tab1:
         )
         st.altair_chart(chart,  use_container_width=True)
         # st.line_chart(df_daily, x='created_at', y='total')
+
 with tab2:
+    df_sales_team = sales_team()
+    df_sales_count = sales_count()
+    regions = np.append(
+        ["Cumulative"], df_sales_team['RegionName'].drop_duplicates().to_numpy())
+    col1, col2, col3, col4 = st.columns(
+        [0.5, 0.5, 1, 0.75])
+
+    with col1:
+        region = st.selectbox(
+            "Select Region", regions)
+
+    if (region != 'Cumulative'):
+        df_filter = df_sales_team[df_sales_team['RegionName'] == region]
+        df_asm_count = df_sales_count[df_sales_count['RegionName']
+                                      == region]['total_asm']
+    else:
+        df_filter = df_sales_team
+        df_asm_count = df_sales_count['total_asm'].sum()
+        print(df_asm_count)
+    st.divider()
+    col5, col6, col7 = st.columns([1, 1, 4])
+    with col5:
+        st.metric(
+            "**:blue[Total Salesmen]**", df_filter.shape[0])
+    print(df_filter['FLMPositionId'].drop_duplicates(inplace=True))
+    with col6:
+        st.metric(
+            "**:blue[Total ASM]**", df_asm_count)
+    st.data_editor(df_filter, hide_index=True)
+with tab3:
 
     region_list = np.append(
         ["Cumulative"], df_master['RegionName'].drop_duplicates().to_numpy())
@@ -137,7 +168,7 @@ with tab2:
 
     with col6:
         view = st.selectbox(
-            "Select View", ['Key Metrics', 'Data Tables'])
+            "Select View", ['Data Tables', 'Key Metrics'])
     st.divider()
 
     if (region_list == 'Cumulative') and (program == 'All'):
@@ -276,7 +307,9 @@ with tab2:
 
         },
         )
-with tab3:
+
+
+with tab4:
     if 'counter' not in st.session_state:
         st.session_state['counter'] = 0
 
@@ -397,7 +430,7 @@ with tab3:
         else:
             st.write("No data available")
 
-with tab4:
+with tab5:
     if 'win_counter' not in st.session_state:
         st.session_state['win_counter'] = 0
 

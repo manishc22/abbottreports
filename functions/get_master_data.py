@@ -12,6 +12,7 @@ load_dotenv()
 def sql_engine():
     engine = create_engine(
         "postgresql://postgres.menngmczcnnppczwxokk:z8sbaqh10domUZS3@aws-0-us-east-1.pooler.supabase.com:6543/postgres")
+
     return engine
 
 
@@ -75,6 +76,32 @@ def daily_forms():
     with engine.begin() as conn:
         sql = text(
             """select * from daily_forms
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=7200)
+def sales_team():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select * from salesman_forms_filled
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=7200)
+def sales_count():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select * from sales_count
                """)
         data = pd.read_sql_query(
             sql, conn)
