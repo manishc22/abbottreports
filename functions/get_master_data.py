@@ -16,7 +16,7 @@ def sql_engine():
     return engine
 
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=7200)
 def master_view():
     engine = sql_engine()
     with engine.begin() as conn:
@@ -29,7 +29,7 @@ def master_view():
     return data
 
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=7200)
 def total_count():
     engine = sql_engine()
     with engine.begin() as conn:
@@ -44,7 +44,7 @@ def total_count():
     return data
 
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=7200)
 def overview_data():
     engine = sql_engine()
     with engine.begin() as conn:
@@ -57,7 +57,7 @@ def overview_data():
     return data
 
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=7200)
 def audit_data():
     engine = sql_engine()
     with engine.begin() as conn:
@@ -70,7 +70,7 @@ def audit_data():
     return data
 
 
-@st.cache_data(ttl=1800)
+@st.cache_data(ttl=7200)
 def daily_forms():
     engine = sql_engine()
     with engine.begin() as conn:
@@ -88,7 +88,7 @@ def sales_team():
     engine = sql_engine()
     with engine.begin() as conn:
         sql = text(
-            """select * from salesman_forms_filled
+            """select * from sales_team_final
                """)
         data = pd.read_sql_query(
             sql, conn)
@@ -102,6 +102,45 @@ def sales_count():
     with engine.begin() as conn:
         sql = text(
             """select * from sales_count
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=7200)
+def sales_team_total():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select * from sales_team
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=7200)
+def sales_store_master():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select "SalesmanPositionID", "StoreName" from abbott_master_jan
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=7200)
+def total_sales_visits():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select * from total_sales_visits
                """)
         data = pd.read_sql_query(
             sql, conn)
