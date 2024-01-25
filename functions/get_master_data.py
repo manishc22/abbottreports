@@ -157,7 +157,7 @@ def weekly_forms():
             """WITH weekly_forms as
             (Select "RegionName", created_at, month, DATE_PART('week', created_at)::int as Week
             from store_audits where month = 'Jan')
-            select "RegionName", week, count(*)
+            select "RegionName", week::int, count(*)
             from weekly_forms
             group by "RegionName", week
             order by week, "RegionName"

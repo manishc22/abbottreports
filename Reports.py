@@ -117,17 +117,23 @@ with tab1:
         # st.line_chart(df_daily, x='created_at', y='total')
 
     df_weekly_forms = weekly_forms()
+    weeks = df_weekly_forms['week'].drop_duplicates()
     i = 0
-    # while i < df_weekly_forms.shape[0]:
-    #     if df_weekly_forms.loc[i, 'week'] >= 47 and df_weekly_forms.loc[i, 'week'] <= 52:
-    #         df_weekly_forms.loc[i, 'week'] = df_weekly_forms.loc[i, 'week'] - 46
-    #     else:
-    #         df_weekly_forms.loc[i, 'week'] = df_weekly_forms.loc[i, 'week'] + 6
-    #     i = i + 1    
     
-    # df_weekly_forms.sort_values(by='week', inplace=True)
+    while i < weeks.shape[0]:
+        temp_week = weeks.values[i]
+        
+        if df_weekly_forms[(df_weekly_forms['RegionName'] == 'SOUTH 2') & (df_weekly_forms['week']==temp_week)]['count'].shape[0] == 0:
+            df_temp_south = pd.DataFrame({'RegionName':'SOUTH 2', 'week':temp_week, 'count':0}, index=[1])
+            print(df_temp_south)
+            df_weekly_forms_updated = pd.concat([df_weekly_forms, df_temp_south]).reset_index(drop=True)
 
-    print(df_weekly_forms['week'].drop_duplicates())
+        i = i + 1    
+    
+        
+    df_weekly_forms_updated.sort_values(by='week', inplace=True)
+    # print(df_weekly_forms_updated)
+    
     with col2:
     #     selector = alt.selection_single(encodings=['x', 'color']) 
 
@@ -142,15 +148,15 @@ with tab1:
         
         fig1 = go.Figure(data=[
             go.Bar(name='North',
-                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'NORTH']['count']),
+                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'NORTH']['count']),
             go.Bar(name='East',
-                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'EAST']['count']),
+                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'EAST']['count']),
             go.Bar(name='South1',
-                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 1']['count']),
+                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'SOUTH 1']['count']),
             go.Bar(name='South2',
-                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 2']['count']),
+                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'SOUTH 2']['count']),
             go.Bar(name='West',
-                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'WEST']['count']),              
+                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'WEST']['count']),              
         ])
         fig1.update_layout(barmode='group', title="Weekly Region-wise Form Submissions (January)", xaxis_title="Weeks",
                            yaxis_title="Total Forms Submitted",
