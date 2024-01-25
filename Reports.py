@@ -3,9 +3,12 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 import streamlit as st
-from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms, sales_team, sales_count, sales_team_total, sales_store_master, total_sales_visits
+from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms, sales_team, sales_count, sales_team_total, sales_store_master, total_sales_visits, weekly_forms
 import numpy as np
 import altair as alt
+import plotly.graph_objects as go
+
+
 
 load_dotenv()
 
@@ -113,6 +116,48 @@ with tab1:
         st.altair_chart(chart,  use_container_width=True)
         # st.line_chart(df_daily, x='created_at', y='total')
 
+    df_weekly_forms = weekly_forms()
+    i = 0
+    # while i < df_weekly_forms.shape[0]:
+    #     if df_weekly_forms.loc[i, 'week'] >= 47 and df_weekly_forms.loc[i, 'week'] <= 52:
+    #         df_weekly_forms.loc[i, 'week'] = df_weekly_forms.loc[i, 'week'] - 46
+    #     else:
+    #         df_weekly_forms.loc[i, 'week'] = df_weekly_forms.loc[i, 'week'] + 6
+    #     i = i + 1    
+    
+    # df_weekly_forms.sort_values(by='week', inplace=True)
+
+    print(df_weekly_forms['week'].drop_duplicates())
+    with col2:
+    #     selector = alt.selection_single(encodings=['x', 'color']) 
+
+    #     chart = alt.Chart(df_weekly_forms).mark_bar().encode( 
+    #     x='week', 
+    #     y='sum(count)', 
+    #     color=alt.condition(selector, 'RegionName', alt.value('lightgray')) 
+    # ).add_selection(selector) 
+    #     # alt.renderers.enable('altair_viewer') 
+    #     # chart.show()
+    #     st.altair_chart(chart, use_container_width=True, theme='streamlit')
+        
+        fig1 = go.Figure(data=[
+            go.Bar(name='North',
+                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'NORTH']['count']),
+            go.Bar(name='East',
+                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'EAST']['count']),
+            go.Bar(name='South1',
+                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 1']['count']),
+            go.Bar(name='South2',
+                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 2']['count']),
+            go.Bar(name='West',
+                   x=df_weekly_forms['week'].drop_duplicates(), y=df_weekly_forms[df_weekly_forms['RegionName'] == 'WEST']['count']),              
+        ])
+        fig1.update_layout(barmode='group', title="Weekly Region-wise Form Submissions (January)", xaxis_title="Weeks",
+                           yaxis_title="Total Forms Submitted",
+                           legend_title="Regions",)
+        st.plotly_chart(fig1, use_container_width=True)
+
+
 with tab2:
     df_sales_team = sales_team()
     df_sales_count = sales_count()
@@ -151,9 +196,8 @@ with tab2:
     df_subtract = df_sales_team_total_filtered[df_sales_team_total_filtered.SalesmanPositionID.isin(df_filter.position_id) == False]
     df_filter_stores_1 = df_total_sales_visits[(df_total_sales_visits['month'] == month) & (df_total_sales_visits['cycle'] == cycle)]
     df_filter.reset_index(inplace = True)
-    print(df_filter)
     i = 0
-    print(df_filter.columns)
+    
     while i < df_filter.shape[0]:
         df_filter.loc[i,'unique_visits'] = df_filter_stores_1[df_filter_stores_1['position_id'] == df_filter.loc[i,'position_id']].shape[0]
         df_filter.loc[i,'coverage'] = round(df_filter.loc[i,'unique_visits']*100 / df_filter.loc[i,'total_stores'], 1)
@@ -168,7 +212,7 @@ with tab2:
         
         st.metric(
             "**:blue[Total Salesmen]**", f"{df_filter.shape[0]} / {df_sales_total}")
-    print(df_filter['FLMPositionId'].drop_duplicates(inplace=True))
+    
     with col6:
         st.metric(
             "**:blue[Total ASM]**", f"{df_asm_count} / {df_asm_total}")
@@ -208,14 +252,14 @@ with tab2:
         df_filter_master = df_master_stores[df_master_stores['SalesmanPositionID'] == position_id]
         df_filter_stores = df_total_sales_visits[(df_total_sales_visits['month'] == month) & (df_total_sales_visits['cycle'] == cycle) & (df_total_sales_visits['position_id'] == position_id)]
         df_store_subtract = df_filter_master[df_filter_master.StoreName.isin(df_filter_stores.store_name_updated) == False]
-        print(df_store_subtract)
+        
         st.data_editor(df_filter_stores, hide_index=True, column_config={'month':None, 'cycle':None, 'position_id': None})
         st.divider()
         st.write('##### Stores with zero visits')
         col1, col2 = st.columns(2)
         with col1:
             metric = df_filter[df_filter['position_id'] == position_id]['total_stores'].values[0]
-            print(metric)
+        
             st.metric(
                 "**:blue[Total Stores with zero visits]**", f'{df_store_subtract.shape[0]} / {metric}')
         with col2:    
@@ -394,7 +438,7 @@ with tab4:
     counter = st.session_state.counter
 
     def reset_counter():
-        print("RESET")
+        
         st.session_state.counter = 0
 
     region_list = np.append(
@@ -458,7 +502,7 @@ with tab4:
         #     "Select Salesman", salesman_list, key=2.6)
 
     with col3:
-        print("Counter+ " + str(counter))
+        
         if df_final.shape[0] > 0:
             total_images = df_final.shape[0]
 
@@ -494,7 +538,7 @@ with tab4:
                 st.write(f"###### {msg}")
 
             def increment_counter():
-                print(counter)
+                
                 st.session_state.counter += 1
 
             def decrement_counter():
@@ -616,7 +660,7 @@ with tab5:
 
         if df_final.shape[0] > 0:
             total_images = df_final.shape[0]
-            print(df_final)
+           
             col11, col12, col13, col14, col15 = st.columns(
                 [1, 3, 1, 1, 1], gap='small')
             with col11:
