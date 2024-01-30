@@ -283,10 +283,10 @@ with tab3:
         [0.5, 0.5, 1, 0.75, 0.5, 1])
     with col1:
         month = st.selectbox(
-            "Select Month", df_master['month'].drop_duplicates())
+            "Select Month", df_master['month'].drop_duplicates(), key='tab3_month')
     with col2:
         cycle = st.selectbox(
-            "Select Cycle", df_master['cycle'].drop_duplicates())
+            "Select Cycle", df_master['cycle'].drop_duplicates(), key = 'tab3_cycle')
     with col3:
         region_list = st.selectbox(
             "Select Region", region_list)
