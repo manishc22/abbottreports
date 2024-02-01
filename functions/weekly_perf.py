@@ -1,8 +1,6 @@
 import pandas as pd
 from .get_master_data import weekly_data
 
-import xlsxwriter
-
 from datetime import date
 
 def weekly_report(month):
