@@ -4,10 +4,11 @@ from supabase import create_client, Client
 import os
 import streamlit as st
 from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms, sales_team, sales_count, sales_team_total, sales_store_master, total_sales_visits, weekly_forms
+from functions.weekly_perf import weekly_report
 import numpy as np
 import altair as alt
 import plotly.graph_objects as go
-
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
 
 
 load_dotenv()
@@ -30,6 +31,9 @@ df_overview = overview_data()
 df_overview.replace("", "None", inplace=True)
 
 df_daily = daily_forms()
+df_daily['created_at'] = pd.to_datetime(df_daily['created_at'])
+df_daily['month'] = df_daily['created_at'].dt.strftime('%b')
+
 df_overview.loc['Total',
                 'Forms Received'] = str(int(df_overview['Forms Received'].sum()))
 df_overview.loc['Total',
@@ -108,7 +112,7 @@ with tab1:
         st.divider()
     with col1:
 
-        chart = alt.Chart(df_daily, title='Daily Forms Filled').mark_bar().encode(
+        chart = alt.Chart(df_daily[df_daily['month']==month], title='Daily Forms Filled').mark_bar().encode(
             x=alt.X('created_at', sort=None, title='Date'),
             y=alt.Y('total',
                     title='Total Forms'),
@@ -116,7 +120,7 @@ with tab1:
         st.altair_chart(chart,  use_container_width=True)
         # st.line_chart(df_daily, x='created_at', y='total')
 
-    df_weekly_forms = weekly_forms()
+    df_weekly_forms = weekly_forms(month)
     weeks = df_weekly_forms['week'].drop_duplicates()
     i = 0
     
@@ -158,10 +162,36 @@ with tab1:
             go.Bar(name='West',
                    x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'WEST']['count']),              
         ])
-        fig1.update_layout(barmode='group', title="Weekly Region-wise Form Submissions (January)", xaxis_title="Weeks",
+        fig1.update_layout(barmode='group', title=f"Weekly Region-wise Form Submissions ({month})", xaxis_title="Weeks",
                            yaxis_title="Total Forms Submitted",
                            legend_title="Regions",)
         st.plotly_chart(fig1, use_container_width=True)
+
+    # df_weekly = weekly_report(month)
+    
+    # gb = GridOptionsBuilder.from_dataframe(df_weekly)
+
+    # gb.configure_default_column(
+    #     groupable=True, value=True, enableRowGroup=True, aggFunc='sum', editable=True)
+    # # gb.configure_pagination(paginationAutoPageSize=True)
+    # gb.configure_grid_options(domLayout='normal')
+    # gb.configure_side_bar()
+    # gridOptions = gb.build()
+    # # print(df_month.shape)
+    # # col1, col2, col3 = st.columns([0.5, 8, 0.5], gap='large')
+    # # with col2:
+    # st.markdown('##### Weekly Report')
+    # grid_response = AgGrid(
+    #     df_weekly,
+    #     gridOptions=gridOptions,
+    #     height=400,
+    #     width='100%',
+    #     # data_return_mode=return_mode_value,
+    #     # update_mode=update_mode_value,
+    #     fit_columns_on_grid_load=True,
+    #     allow_unsafe_jscode=True,  # Set it to True to allow jsfunction to be injected
+    #     enable_enterprise_modules=True
+    # ) 
 
 
 with tab2:
