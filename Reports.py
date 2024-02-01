@@ -3,12 +3,12 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 import streamlit as st
-from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms, sales_team, sales_count, sales_team_total, sales_store_master, total_sales_visits, weekly_forms
-from functions.weekly_perf import weekly_report
+from functions.get_master_data import master_view, total_count, audit_data, overview_data, daily_forms, sales_team, sales_count, sales_team_total, sales_store_master, total_sales_visits, weekly_data
+
 import numpy as np
 import altair as alt
 import plotly.graph_objects as go
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
+
 
 
 load_dotenv()
@@ -120,78 +120,43 @@ with tab1:
         st.altair_chart(chart,  use_container_width=True)
         # st.line_chart(df_daily, x='created_at', y='total')
 
-    df_weekly_forms = weekly_forms(month)
-    weeks = df_weekly_forms['week'].drop_duplicates()
-    i = 0
-    
-    while i < weeks.shape[0]:
-        temp_week = weeks.values[i]
-        
-        if df_weekly_forms[(df_weekly_forms['RegionName'] == 'SOUTH 2') & (df_weekly_forms['week']==temp_week)]['count'].shape[0] == 0:
-            df_temp_south = pd.DataFrame({'RegionName':'SOUTH 2', 'week':temp_week, 'count':0}, index=[1])
-            print(df_temp_south)
-            df_weekly_forms_updated = pd.concat([df_weekly_forms, df_temp_south]).reset_index(drop=True)
-
-        i = i + 1    
+    df_weekly_forms = weekly_data(month)
+    weeks = df_weekly_forms['Week Start / End'].drop_duplicates().values
+    print(weeks)
+    # with col2:
     
         
-    df_weekly_forms_updated.sort_values(by='week', inplace=True)
-    # print(df_weekly_forms_updated)
-    
-    with col2:
-    #     selector = alt.selection_single(encodings=['x', 'color']) 
+    fig1 = go.Figure(data=[
+        go.Bar(name='Forms Filled (North)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'NORTH']['Weekly Forms Filled']),
+        go.Bar(name='Weekly Targets (North)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'NORTH']['Weekly Target']),    
+        go.Bar(name='Forms Filled (East)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'EAST']['Weekly Forms Filled']),
+        go.Bar(name='Weekly Targets (East)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'EAST']['Weekly Target']),     
+        go.Bar(name='Forms Filled (West)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'WEST']['Weekly Forms Filled']),
+        go.Bar(name='Weekly Targets (West)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'WEST']['Weekly Target']),         
+        go.Bar(name='Forms Filled (South1)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 1']['Weekly Forms Filled']),
+        go.Bar(name='Weekly Targets (South1)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 1']['Weekly Target']),         
+        go.Bar(name='Forms Filled (South2)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 2']['Weekly Forms Filled']),
+        go.Bar(name='Weekly Targets (South2)',
+            x=weeks, y=df_weekly_forms[df_weekly_forms['RegionName'] == 'SOUTH 2']['Weekly Target']),             
 
-    #     chart = alt.Chart(df_weekly_forms).mark_bar().encode( 
-    #     x='week', 
-    #     y='sum(count)', 
-    #     color=alt.condition(selector, 'RegionName', alt.value('lightgray')) 
-    # ).add_selection(selector) 
-    #     # alt.renderers.enable('altair_viewer') 
-    #     # chart.show()
-    #     st.altair_chart(chart, use_container_width=True, theme='streamlit')
         
-        fig1 = go.Figure(data=[
-            go.Bar(name='North',
-                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'NORTH']['count']),
-            go.Bar(name='East',
-                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'EAST']['count']),
-            go.Bar(name='South1',
-                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'SOUTH 1']['count']),
-            go.Bar(name='South2',
-                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'SOUTH 2']['count']),
-            go.Bar(name='West',
-                   x=df_weekly_forms_updated['week'].drop_duplicates(), y=df_weekly_forms_updated[df_weekly_forms_updated['RegionName'] == 'WEST']['count']),              
-        ])
-        fig1.update_layout(barmode='group', title=f"Weekly Region-wise Form Submissions ({month})", xaxis_title="Weeks",
-                           yaxis_title="Total Forms Submitted",
-                           legend_title="Regions",)
-        st.plotly_chart(fig1, use_container_width=True)
-
-    # df_weekly = weekly_report(month)
+    ])
+    fig1.update_layout(barmode='group', title=f"Weekly Region-wise Form Submissions ({month})", xaxis_title="Weeks",
+                    yaxis_title="Total Count",
+                    legend_title="Bar Type",)
     
-    # gb = GridOptionsBuilder.from_dataframe(df_weekly)
+    st.plotly_chart(fig1, use_container_width=True)
 
-    # gb.configure_default_column(
-    #     groupable=True, value=True, enableRowGroup=True, aggFunc='sum', editable=True)
-    # # gb.configure_pagination(paginationAutoPageSize=True)
-    # gb.configure_grid_options(domLayout='normal')
-    # gb.configure_side_bar()
-    # gridOptions = gb.build()
-    # # print(df_month.shape)
-    # # col1, col2, col3 = st.columns([0.5, 8, 0.5], gap='large')
-    # # with col2:
-    # st.markdown('##### Weekly Report')
-    # grid_response = AgGrid(
-    #     df_weekly,
-    #     gridOptions=gridOptions,
-    #     height=400,
-    #     width='100%',
-    #     # data_return_mode=return_mode_value,
-    #     # update_mode=update_mode_value,
-    #     fit_columns_on_grid_load=True,
-    #     allow_unsafe_jscode=True,  # Set it to True to allow jsfunction to be injected
-    #     enable_enterprise_modules=True
-    # ) 
+    
 
 
 with tab2:
