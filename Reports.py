@@ -31,8 +31,8 @@ df_overview = overview_data()
 df_overview.replace("", "None", inplace=True)
 
 df_daily = daily_forms()
-df_daily['created_at'] = pd.to_datetime(df_daily['created_at'])
-df_daily['month'] = df_daily['created_at'].dt.strftime('%b')
+df_daily['date'] = pd.to_datetime(df_daily['created_at'])
+df_daily['month'] = df_daily['date'].dt.strftime('%b')
 
 df_overview.loc['Total',
                 'Forms Received'] = str(int(df_overview['Forms Received'].sum()))
