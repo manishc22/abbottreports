@@ -19,14 +19,14 @@ def sql_engine():
 @st.cache_data(ttl=7200)
 def master_view():
     engine = sql_engine()
-    
+
     with engine.begin() as conn:
         sql = text(
-            """select * from master_view_new order by created_at desc
+            """select * from master_view_new where month not in ('Nov','Dec','Jan','Feb','Mar', 'Apr') order by created_at desc
                """)
         data = pd.read_sql_query(
             sql, conn)
-        
+
         conn.close()
     return data
 
