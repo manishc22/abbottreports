@@ -42,7 +42,7 @@ df_regional.rename(
     columns={"program_name": "ProgramName", "count": "Total KYCs"}, inplace=True)
 df_master = kyc_master_data()
 df_master.rename(columns={"count": "Total Stores"}, inplace=True)
-col1, col2, col3 = st.columns([1, 3, 2], gap='large')
+col1, col2, col3 = st.columns([1, 5, 1], gap='large')
 df_regional.set_index(['RegionName', 'ProgramName'], inplace=True)
 df_master.set_index(['RegionName', 'ProgramName'], inplace=True)
 
