@@ -160,3 +160,95 @@ def weekly_data(month):
         data = pd.read_sql_query(
             sql, conn, params={"month": month})
     return data
+
+
+def kyc_total_data():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select count(distinct customer_code)
+               from kyc_audits
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+    return data
+
+
+@st.cache_data(ttl=20000)
+def kyc_master_data():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select "RegionName", "ProgramName", count(distinct "CustomerCode") from kyc_master group by "RegionName", "ProgramName" """)
+        data = pd.read_sql_query(sql, conn)
+        return data
+
+
+def kyc_regional_data():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select "RegionName", program_name, count(distinct customer_code) from kyc_audits group by "RegionName", program_name  """)
+        data = pd.read_sql_query(sql, conn)
+        return data
+
+
+@st.cache_data(ttl=7200)
+def kyc_daily_forms():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select * from kyc_daily_forms
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=7200)
+def kyc_master():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select * from kyc_master_status
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=20000)
+def tse_exception():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """with tse_exceptions as
+(select distinct "RegionName", "TSEId", count(*) as "Remaining Stores", 
+(select count(distinct("StoreName")) from kyc_master where kyc_master."TSEId" = k."TSEId") as "Total Stores" 
+from kyc_master_status k
+where "KYC Status" is null group by "RegionName", "TSEId")
+select "RegionName", "TSEId", "Remaining Stores", "Total Stores", TRUNC(("Remaining Stores" * 100 / "Total Stores"),1) as "% Remaining" from tse_exceptions 
+where "Total Stores" <> 0
+and TRUNC(("Remaining Stores" * 100 / "Total Stores"),1) >= 20
+order by TRUNC(("Remaining Stores" * 100 / "Total Stores"),1) desc
+
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
+
+
+@st.cache_data(ttl=20000)
+def zero_isr():
+    engine = sql_engine()
+    with engine.begin() as conn:
+        sql = text(
+            """select * from zero_isr where "ISRPositionID" is not null
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+        conn.close()
+    return data
