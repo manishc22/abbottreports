@@ -72,7 +72,7 @@ with col1:
 
 col1, col2 = st.columns([8, 1], gap='large')
 with col1:
-    col20, col21, col22 = st.columns([2, 1, 1], gap='large')
+    col20, col21, col22 = st.columns([4, 1, 1], gap='large')
     with col20:
         df_overview_f = df_overview[(df_overview['Month'] == month)]
         df_overview_f.loc['Total', 'RegionName'] = 'Total'
