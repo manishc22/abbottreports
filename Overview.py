@@ -3,7 +3,7 @@ import pandas as pd
 from supabase import create_client, Client
 import os
 import streamlit as st
-from functions.get_master_data import master_view, audit_data, overview_data, daily_forms, weekly_data
+from functions.get_master_data import master_view, audit_data, overview_data, daily_forms, weekly_data, total_audits
 
 import numpy as np
 import altair as alt
@@ -72,37 +72,53 @@ with col1:
 
 col1, col2 = st.columns([8, 1], gap='large')
 with col1:
+    col20, col21, col22 = st.columns([2, 1, 1], gap='large')
+    with col20:
+        df_overview_f = df_overview[(df_overview['Month'] == month)]
+        df_overview_f.loc['Total', 'RegionName'] = 'Total'
+        df_overview_f.loc['Total',
+                          'Forms Received'] = int(df_overview_f['Forms Received'].sum())
+        df_overview_f.loc['Total',
+                          'Images Audited'] = int(df_overview_f['Images Audited'].sum())
+        df_overview_f.loc['Total',
+                          'Samrat'] = int(df_overview_f['Samrat'].sum())
+        df_overview_f.loc['Total',
+                          'SUB-D'] = int(df_overview_f['SUB-D'].sum())
+        df_overview_f.loc['Total',
+                          'Hygeine Corner'] = int(df_overview_f['Hygeine Corner'].sum())
+        df_overview_f.loc['Total',
+                          'None'] = int(df_overview_f['None'].sum())
+        df_audit_f = df_audit_data[(df_audit_data['Month'] == month)]
 
-    df_overview_f = df_overview[(df_overview['Month'] == month)]
-    df_overview_f.loc['Total',
-                      'Forms Received'] = int(df_overview_f['Forms Received'].sum())
-    df_overview_f.loc['Total',
-                      'Images Audited'] = int(df_overview_f['Images Audited'].sum())
-    df_overview_f.loc['Total',
-                      'Samrat'] = int(df_overview_f['Samrat'].sum())
-    df_overview_f.loc['Total',
-                      'SUB-D'] = int(df_overview_f['SUB-D'].sum())
-    df_overview_f.loc['Total',
-                      'None'] = int(df_overview_f['None'].sum())
-    df_audit_f = df_audit_data[(df_audit_data['Month'] == month)]
+        df_audit_f.loc['Total',
+                       'Audited'] = int(df_audit_f['Audited'].sum())
+        df_audit_f.loc['Total',
+                       'Pediasure Window Visibility'] = int(df_audit_f['Pediasure Window Visibility'].sum())
+        df_audit_f.loc['Total',
+                       'Ensure Window Visibility'] = int(df_audit_f['Ensure Window Visibility'].sum())
+        df_audit_f.loc['Total',
+                       'All Brands Exist'] = int(df_audit_f['All Brands Exist'].sum())
+        df_audit_f.loc['Total',
+                       'Good Image Quality'] = int(df_audit_f['Good Image Quality'].sum())
+        df_audit_f.loc['Total',
+                       'Selfie with Dealerboard'] = int(df_audit_f['Selfie with Dealerboard'].sum())
+        df_audit_f.loc['Total',
+                       'Stores not in DB'] = int(df_audit_f['Stores not in DB'].sum())
+        st.write("##### Overview")
+        st.dataframe(df_overview_f, hide_index=True, column_config={
+            "Month": None, "Cycle": None, "Yuvraj": None})
 
-    df_audit_f.loc['Total',
-                   'Audited'] = int(df_audit_f['Audited'].sum())
-    df_audit_f.loc['Total',
-                   'Pediasure Window Visibility'] = int(df_audit_f['Pediasure Window Visibility'].sum())
-    df_audit_f.loc['Total',
-                   'Ensure Window Visibility'] = int(df_audit_f['Ensure Window Visibility'].sum())
-    df_audit_f.loc['Total',
-                   'All Brands Exist'] = int(df_audit_f['All Brands Exist'].sum())
-    df_audit_f.loc['Total',
-                   'Good Image Quality'] = int(df_audit_f['Good Image Quality'].sum())
-    df_audit_f.loc['Total',
-                   'Selfie with Dealerboard'] = int(df_audit_f['Selfie with Dealerboard'].sum())
-    df_audit_f.loc['Total',
-                   'Stores not in DB'] = int(df_audit_f['Stores not in DB'].sum())
-    st.write("##### Overview")
-    st.dataframe(df_overview_f, hide_index=True, column_config={
-        "Month": None, "Cycle": None, "Yuvraj": None})
+    with col21:
+        df_total = total_audits()
+
+        st.metric(
+            "**:blue[Total Stores]**", df_total['count'])
+    with col22:
+        pct_coverage = round(df_overview_f.loc['Total',
+                                               'Forms Received']*100/df_total['count'], 2)
+        st.metric(
+            "**:blue[% Coverage]**", pct_coverage)
+
     st.divider()
 with col1:
     st.write("##### Audit Summary")
@@ -110,6 +126,7 @@ with col1:
     st.dataframe(df_audit_f,  hide_index=True, column_config={
         "Month": None, "Cycle": None}, use_container_width=True)
     st.divider()
+
 with col1:
 
     chart = alt.Chart(df_daily[df_daily['month'] == month], title='Daily Forms Filled').mark_bar().encode(

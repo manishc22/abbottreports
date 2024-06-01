@@ -31,6 +31,21 @@ def master_view():
     return data
 
 
+@st.cache_data(ttl=20000)
+def total_audits():
+    engine = sql_engine()
+
+    with engine.begin() as conn:
+        sql = text(
+            """select count(*) from abbott_master_jan
+               """)
+        data = pd.read_sql_query(
+            sql, conn)
+
+        conn.close()
+    return data
+
+
 @st.cache_data(ttl=7200)
 def total_count():
     engine = sql_engine()
@@ -184,6 +199,7 @@ def kyc_master_data():
         return data
 
 
+@st.cache_data(ttl=7200)
 def kyc_regional_data():
     engine = sql_engine()
     with engine.begin() as conn:
