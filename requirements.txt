@@ -6,3 +6,4 @@ psycopg2
 altair
 plotly
 streamlit_aggrid
+xlsxwriter
