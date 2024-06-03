@@ -11,7 +11,7 @@ import numpy as np
 import altair as alt
 import plotly.graph_objects as go
 from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
-
+import xlsxwriter
 
 load_dotenv()
 
