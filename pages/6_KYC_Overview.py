@@ -75,7 +75,7 @@ with col1:
 
 with col2:
     st.write('##### Region wise KYC Audits')
-    col11, col12 = st.columns([5, 1], gap='large')
+    col11, col12 = st.columns([4, 1], gap='large')
     with col12:
         def to_excel(df) -> bytes:
             output = io.BytesIO()
