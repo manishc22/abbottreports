@@ -1,3 +1,4 @@
+import io
 from dotenv import load_dotenv
 import pandas as pd
 from supabase import create_client, Client
@@ -9,6 +10,7 @@ import time
 import numpy as np
 import altair as alt
 import plotly.graph_objects as go
+from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
 
 
 load_dotenv()
@@ -62,11 +64,46 @@ with col1:
     st.metric(
         "**:blue[Total KYCs]**", total_count['count'][0])
 
+gb = GridOptionsBuilder.from_dataframe(df_final)
+
+gb.configure_default_column(
+    groupable=True, value=True, enableRowGroup=True, aggFunc='sum', editable=True)
+# gb.configure_pagination(paginationAutoPageSize=True)
+gb.configure_grid_options(domLayout='normal')
+gb.configure_side_bar()
+gridOptions = gb.build()
+
 with col2:
     st.write('##### Region wise KYC Audits')
-    st.dataframe(df_final,  hide_index=True, column_config={"RegionName": 'Region Name', "ProgramName": 'Program Name'},
-                 use_container_width=True)
+    grid_response = AgGrid(
+        df_final,
+        gridOptions=gridOptions,
+        height=300,
+        width='100%',
+        # data_return_mode=return_mode_value,
+        # update_mode=update_mode_value,
+        fit_columns_on_grid_load=True,
+        # allow_unsafe_jscode=True,  # Set it to True to allow jsfunction to be injected
+        # enable_enterprise_modules=True
+    )
 
+    out_df = grid_response["data"]
+
+    def to_excel(df) -> bytes:
+        output = io.BytesIO()
+        writer = pd.ExcelWriter(output, engine="xlsxwriter")
+        df.to_excel(writer, sheet_name="Sheet1")
+        writer.save()
+        processed_data = output.getvalue()
+        return processed_data
+
+    st.download_button(
+        "Download as excel",
+        data=to_excel(out_df),
+        file_name="output.xlsx",
+        mime="application/vnd.ms-excel",
+    )
+    st.write('   ')
     df_daily = kyc_daily_forms()
     chart = alt.Chart(df_daily, title='Daily KYCs').mark_bar().encode(
         x=alt.X('created_at', sort=None, title='Date'),
