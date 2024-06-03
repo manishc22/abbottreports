@@ -1,3 +1,4 @@
+import io
 from dotenv import load_dotenv
 import pandas as pd
 from supabase import create_client, Client
@@ -50,6 +51,22 @@ with col3:
     st.metric(
         "**:blue[KYC Failed]**", df_details[df_details['KYC Status'] ==
                                             'Failed'].shape[0])
+col11, col12 = st.columns([5, 1], gap='large')
+with col12:
+    def to_excel(df) -> bytes:
+        output = io.BytesIO()
+        writer = pd.ExcelWriter(output, engine="xlsxwriter")
+        df.to_excel(writer, sheet_name="Sheet1")
+        writer.close()
+        processed_data = output.getvalue()
+        return processed_data
+
+    st.download_button(
+        "Download as excel",
+        data=to_excel(df_details),
+        file_name="output.xlsx",
+        mime="application/vnd.ms-excel",
+    )
 st.write('  ')
 st.dataframe(df_details,  hide_index=True,
              use_container_width=True)

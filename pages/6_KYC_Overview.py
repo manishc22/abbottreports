@@ -10,7 +10,7 @@ import time
 import numpy as np
 import altair as alt
 import plotly.graph_objects as go
-from st_aggrid import GridOptionsBuilder, AgGrid, GridUpdateMode, DataReturnMode, JsCode
+from st_aggrid import AgGrid
 import xlsxwriter
 
 load_dotenv()
@@ -64,45 +64,35 @@ with col1:
     st.metric(
         "**:blue[Total KYCs]**", total_count['count'][0])
 
-gb = GridOptionsBuilder.from_dataframe(df_final)
+# gb = GridOptionsBuilder.from_dataframe(df_final)
 
-gb.configure_default_column(
-    groupable=True, value=True, enableRowGroup=True, aggFunc='sum', editable=True)
+# gb.configure_default_column(
+#     groupable=True, value=True, enableRowGroup=True, aggFunc='sum', editable=True)
 # gb.configure_pagination(paginationAutoPageSize=True)
-gb.configure_grid_options(domLayout='normal')
-gb.configure_side_bar()
-gridOptions = gb.build()
+# gb.configure_grid_options(domLayout='normal')
+# gb.configure_side_bar()
+# gridOptions = gb.build()
 
 with col2:
     st.write('##### Region wise KYC Audits')
-    grid_response = AgGrid(
-        df_final,
-        gridOptions=gridOptions,
-        height=300,
-        width='100%',
-        # data_return_mode=return_mode_value,
-        # update_mode=update_mode_value,
-        fit_columns_on_grid_load=True,
-        # allow_unsafe_jscode=True,  # Set it to True to allow jsfunction to be injected
-        # enable_enterprise_modules=True
-    )
+    col11, col12 = st.columns([5, 1], gap='large')
+    with col12:
+        def to_excel(df) -> bytes:
+            output = io.BytesIO()
+            writer = pd.ExcelWriter(output, engine="xlsxwriter")
+            df.to_excel(writer, sheet_name="Sheet1")
+            writer.close()
+            processed_data = output.getvalue()
+            return processed_data
 
-    out_df = grid_response["data"]
+        st.download_button(
+            "Download as excel",
+            data=to_excel(df_final),
+            file_name="output.xlsx",
+            mime="application/vnd.ms-excel",
+        )
 
-    def to_excel(df) -> bytes:
-        output = io.BytesIO()
-        writer = pd.ExcelWriter(output, engine="xlsxwriter")
-        df.to_excel(writer, sheet_name="Sheet1")
-        writer.close()
-        processed_data = output.getvalue()
-        return processed_data
-
-    st.download_button(
-        "Download as excel",
-        data=to_excel(out_df),
-        file_name="output.xlsx",
-        mime="application/vnd.ms-excel",
-    )
+    st.dataframe(df_final, hide_index=True, use_container_width=True)
     st.write('   ')
     df_daily = kyc_daily_forms()
     chart = alt.Chart(df_daily, title='Daily KYCs').mark_bar().encode(
