@@ -189,32 +189,32 @@ def kyc_total_data():
     return data
 
 
-@st.cache_data(ttl=20000)
+# @st.cache_data(ttl=20000)
 def kyc_master_data():
     engine = sql_engine()
     with engine.begin() as conn:
         sql = text(
-            """select "RegionName", "ProgramName", count(distinct "CustomerCode") from kyc_master group by "RegionName", "ProgramName" """)
+            """select * from kyc_master_region_program_count_mv """)
         data = pd.read_sql_query(sql, conn)
         return data
 
 
-@st.cache_data(ttl=7200)
+# @st.cache_data(ttl=7200)
 def kyc_regional_data():
     engine = sql_engine()
     with engine.begin() as conn:
         sql = text(
-            """select "RegionName", program_name, count(distinct customer_code) from kyc_audits group by "RegionName", program_name  """)
+            """select * from kyc_details_region  """)
         data = pd.read_sql_query(sql, conn)
         return data
 
 
-@st.cache_data(ttl=7200)
+# @st.cache_data(ttl=7200)
 def kyc_daily_forms():
     engine = sql_engine()
     with engine.begin() as conn:
         sql = text(
-            """select * from kyc_daily_forms
+            """select * from kyc_daily_mat_forms
                """)
         data = pd.read_sql_query(
             sql, conn)
