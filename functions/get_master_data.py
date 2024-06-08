@@ -189,7 +189,7 @@ def kyc_total_data():
     return data
 
 
-# @st.cache_data(ttl=20000)
+@st.cache_data(ttl=20000)
 def kyc_master_data():
     engine = sql_engine()
     with engine.begin() as conn:
@@ -199,7 +199,7 @@ def kyc_master_data():
         return data
 
 
-# @st.cache_data(ttl=7200)
+@st.cache_data(ttl=7200)
 def kyc_regional_data():
     engine = sql_engine()
     with engine.begin() as conn:
