@@ -97,16 +97,17 @@ with col1:
         df_audit_f.loc['Total',
                        'Ensure Window Visibility'] = int(df_audit_f['Ensure Window Visibility'].sum())
         df_audit_f.loc['Total',
-                       'All Brands Exist'] = int(df_audit_f['All Brands Exist'].sum())
+                       'Similac Window Visibility'] = int(df_audit_f['Similac Window Visibility'].sum())
         df_audit_f.loc['Total',
-                       'Good Image Quality'] = int(df_audit_f['Good Image Quality'].sum())
+                       'All Brands Exist'] = int(df_audit_f['All Brands Exist'].sum())
+
         df_audit_f.loc['Total',
                        'Selfie with Dealerboard'] = int(df_audit_f['Selfie with Dealerboard'].sum())
         df_audit_f.loc['Total',
                        'Stores not in DB'] = int(df_audit_f['Stores not in DB'].sum())
         st.write("##### Overview")
         st.dataframe(df_overview_f, hide_index=True, column_config={
-            "Month": None, "Cycle": None, "Yuvraj": None})
+            "Month": None, "Cycle": None, "Yuvraj": None, "None": None})
 
     with col21:
         df_total = total_audits()
@@ -124,7 +125,7 @@ with col1:
     st.write("##### Audit Summary")
 
     st.dataframe(df_audit_f,  hide_index=True, column_config={
-        "Month": None, "Cycle": None}, use_container_width=True)
+        "Month": None, "Cycle": None, "Stores not in DB": None}, use_container_width=True)
     st.divider()
 
 with col1:

@@ -70,23 +70,23 @@ if df_filter.shape[0] > 0:
     count = total_count().values[0]
     col10, col11, col12, col13, col14 = st.columns(5, gap='small')
     with col10:
-        st.write("### *Overview*")
+        st.write("#### *Overview*")
     # print(df_filter[df_filter['RMName'] == ''])
     # Total Forms Filled
     with col11:
         st.metric(
             "**:blue[Total Audits]**", df_filter.shape[0])
-# Incorrect Position IDs
-    with col12:
-        st.metric("**:blue[Incorrect Position IDs]**",
-                  df_filter[df_filter['RMName'] == 'None'].shape[0])
-# Stores not in Master DB
-    with col13:
-        st.metric("**:blue[Stores not in Master DB]**",
-                  df_filter[df_filter['store_name_updated'] == 'None'].shape[0])
+# # Incorrect Position IDs
+#     with col12:
+#         st.metric("**:blue[Incorrect Position IDs]**",
+#                   df_filter[df_filter['RMName'] == 'None'].shape[0])
+# # Stores not in Master DB
+#     with col13:
+#         st.metric("**:blue[Stores not in Master DB]**",
+#                   df_filter[df_filter['store_name_updated'] == 'None'].shape[0])
 
 # Selfie with Dealerboard (%)
-    with col11:
+    with col12:
         selfie = round(df_filter[df_filter['selfie_dealerboard']
                                  == True].shape[0] * 100 / df_filter.shape[0], 1)
         st.metric("**:blue[Selfie with Dealerboard (%)]**",
@@ -94,19 +94,19 @@ if df_filter.shape[0] > 0:
 # Bad Image Quality (%)
         image_quality = round(df_filter[df_filter['image_quality']
                                         == False].shape[0] * 100 / df_filter.shape[0], 1)
-    with col12:
-        st.metric("**:blue[Bad Image Quality (%)]**",
-                  image_quality)
+    # with col12:
+    #     st.metric("**:blue[Bad Image Quality (%)]**",
+    #               image_quality)
 
-    with col13:
-        st.metric("**TOTAL FORMS FILLED**",
-                  count)
+    # with col13:
+    #     st.metric("**TOTAL FORMS FILLED**",
+    #               count)
 
     st.divider()
     col10, col11, col12, col13, col14 = st.columns(5, gap='small')
 
     with col10:
-        st.write("### *Pediasure*")
+        st.write("#### *Pediasure*")
 
 # Window Visibility Pediasure (%)
     window_viz_ps = round(df_filter[df_filter['p_window_exist']
@@ -116,29 +116,29 @@ if df_filter.shape[0] > 0:
                   window_viz_ps)
 
 # Pediasure 4 shelf strip
-    ps_shelf = round(df_filter[df_filter['p_four_shelf_strip']
-                               == True].shape[0] * 100 / df_filter.shape[0], 1)
-    with col12:
-        st.metric("**:blue[4 Shelf Strip (%)]**",
-                  ps_shelf)
+    # ps_shelf = round(df_filter[df_filter['p_four_shelf_strip']
+    #                            == True].shape[0] * 100 / df_filter.shape[0], 1)
+    # with col12:
+    #     st.metric("**:blue[4 Shelf Strip (%)]**",
+    #               ps_shelf)
 # Pediasure Eye Level
     ps_eye_level = round(df_filter[df_filter['p_eye_level']
                                    == True].shape[0] * 100 / df_filter.shape[0], 1)
-    with col13:
+    with col12:
         st.metric("**:blue[Eye Level (%)]**",
                   ps_eye_level)
 
     ps_backing = round(df_filter[df_filter['p_backing_sheet']
                                  == True].shape[0] * 100 / df_filter.shape[0], 1)
-    with col14:
-        st.metric("**:blue[Backing Sheet (%)]**",
+    with col13:
+        st.metric("**:blue[Brand Block (%)]**",
                   ps_backing)
 
     st.divider()
     col10, col11, col12, col13, col14 = st.columns(5, gap='small')
 
     with col10:
-        st.write("### *Ensure*")
+        st.write("#### *Ensure*")
 
     window_viz_es = round(df_filter[df_filter['e_window_exist']
                                     == True].shape[0] * 100 / df_filter.shape[0], 1)
@@ -147,23 +147,47 @@ if df_filter.shape[0] > 0:
                   window_viz_es)
 
 # Pediasure 4 shelf strip
-    es_shelf = round(df_filter[df_filter['e_four_shelf_strip']
-                               == True].shape[0] * 100 / df_filter.shape[0], 1)
-    with col12:
-        st.metric("**:blue[4 Shelf Strip (%)]**",
-                  es_shelf)
+    # es_shelf = round(df_filter[df_filter['e_four_shelf_strip']
+    #                            == True].shape[0] * 100 / df_filter.shape[0], 1)
+    # with col12:
+    #     st.metric("**:blue[4 Shelf Strip (%)]**",
+    #               es_shelf)
 # Pediasure Eye Level
     es_eye_level = round(df_filter[df_filter['e_eye_level']
                                    == True].shape[0] * 100 / df_filter.shape[0], 1)
-    with col13:
+    with col12:
         st.metric("**:blue[Eye Level (%)]**",
                   es_eye_level)
 
     es_backing = round(df_filter[df_filter['e_backing_sheet']
                                  == True].shape[0] * 100 / df_filter.shape[0], 1)
-    with col14:
-        st.metric("**:blue[Backing Sheet (%)]**",
+    with col13:
+        st.metric("**:blue[Brand Block (%)]**",
                   es_backing)
+    st.divider()
+    col10, col11, col12, col13, col14 = st.columns(5, gap='small')
+
+    with col10:
+        st.write("#### *Similac*")
+
+    window_viz_si = round(df_filter[df_filter['s_window_exist']
+                                    == True].shape[0] * 100 / df_filter.shape[0], 1)
+    with col11:
+        st.metric("**:blue[Window Visibility (%)]**",
+                  window_viz_si)
+
+    si_eye_level = round(df_filter[df_filter['s_eye_level']
+                                   == True].shape[0] * 100 / df_filter.shape[0], 1)
+    with col12:
+        st.metric("**:blue[Eye Level (%)]**",
+                  si_eye_level)
+
+    si_backing = round(df_filter[df_filter['s_backing_sheet']
+                                 == True].shape[0] * 100 / df_filter.shape[0], 1)
+    with col13:
+        st.metric("**:blue[Brand Block (%)]**",
+                  si_backing)
+
 else:
     st.write("#### No Data Available")
     # Window Visibility Ensure (%)

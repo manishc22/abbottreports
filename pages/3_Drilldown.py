@@ -76,10 +76,25 @@ st.data_editor(df_filter, hide_index=True, column_config={
     "month": None,
     "cycle": None,
     "ASMName": None,
+    "image_quality": None,
+    "p_four_shelf_strip": None,
+    "e_four_shelf_strip": None,
+    "num_window_kits": None,
     "created_at": "Date",
     "position_id": "Sales Position ID",
     "store_name": "Store Name",
-    "SalesmanName": "Salesman"
+    "SalesmanName": "Salesman",
+    "selfie_dealerboard": "Selfie w Dealerboard",
+    "p_window_exist": "Ped Window Visibility",
+    "p_eye_level": "Ped Eye Level",
+    "p_backing_sheet": "Ped Brand Block",
+    "e_window_exist": "Ensure Window Visibility",
+    "e_eye_level": "Ensure Eye Level",
+    "e_backing_sheet": "Ensure Brand Block",
+    "s_window_exist": "Similac Window Visibility",
+    "s_eye_level": "Similac Eye Level",
+    "s_backing_sheet": "Similac Brand Block",
+    "all_brands": "All Brands"
 
 },
 )
