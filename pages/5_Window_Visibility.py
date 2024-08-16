@@ -48,35 +48,34 @@ region_list = np.append(
 program_list = np.append(
     ["All"], df_master['program_name'].drop_duplicates().to_numpy())
 
-col1, col2, col3, col4, col5, col6 = st.columns(
-    [0.5, 0.5, 1, 1, 1, 1])
+col1, col2, col3, col4, col5 = st.columns(
+    [0.5, 1, 1, 1, 1])
 with col1:
     month = st.selectbox(
         "Select Month", df_master['month'].drop_duplicates(), key=3.1)
+# with col2:
+#     cycle = st.selectbox(
+#         "Select Cycle", df_master['cycle'].drop_duplicates(), key=3.2)
 with col2:
-    cycle = st.selectbox(
-        "Select Cycle", df_master['cycle'].drop_duplicates(), key=3.2)
-with col3:
     region = st.selectbox(
         "Select Region", region_list, key=3.3)
-with col4:
+with col3:
     program = st.selectbox(
         "Program Name", program_list, key=3.4)
 
 st.divider()
 
 if (region == 'Cumulative') and (program == 'All'):
-    df_filter = df_master[(df_master['month'] == month)
-                          & (df_master['cycle'] == cycle)]
+    df_filter = df_master[(df_master['month'] == month)]
 if region != 'Cumulative' and program == 'All':
     df_filter = df_master[(df_master['month'] == month)
-                          & (df_master['cycle'] == cycle) & (df_master['RegionName'] == region)]
+                          & (df_master['RegionName'] == region)]
 if region == 'Cumulative' and program != 'All':
     df_filter = df_master[(df_master['month'] == month)
-                          & (df_master['cycle'] == cycle) & (df_master['program_name'] == program)]
+                          & (df_master['program_name'] == program)]
 if region != 'Cumulative' and program != 'All':
     df_filter = df_master[(df_master['month'] == month)
-                          & (df_master['cycle'] == cycle) & (df_master['program_name'] == program) & (df_master['RegionName'] == region)]
+                          & (df_master['program_name'] == program) & (df_master['RegionName'] == region)]
 # print(df_master)
 col1, col2, col3 = st.columns([1, 0.25, 4], gap='large')
 with col1:
@@ -168,7 +167,7 @@ with col3:
         image_url = storage_url + image
 
         msg = "Date: " + date + " " + month + " " + \
-            time + " |  " + cycle + " |  " + store
+            time + " |  " + " |  " + store
         with col12:
             st.write(f"##### PositionID - {position_id}")
             st.write(f"###### {msg}")
