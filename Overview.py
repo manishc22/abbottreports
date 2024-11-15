@@ -18,18 +18,18 @@ supabase: Client = create_client(url, key)
 storage_url = os.getenv("SUPABASE_STORAGE_URL")
 
 st.set_page_config(page_title="Audit Reports",
-                   layout='wide', initial_sidebar_state='collapsed')
+                   layout='wide', initial_sidebar_state='expanded')
 
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     """
+# <style>
+#     [data-testid="collapsedControl"] {
+#         display: none
+#     }
+# </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 df_master = master_view()
 df_master.replace("", "None", inplace=True)
 df_audit_data = audit_data()
@@ -62,13 +62,12 @@ df_audit_data.loc['Total',
 
 # df_master = df_master['RMName'].replace('', np.nan, regex=True)
 
-col1, col2, col3, col4, col5, col6 = st.columns(
-    [0.5, 0.5, 1, 0.75, 0.5, 1])
+col1, col2 = st.columns(
+    [1, 6])
 with col1:
     month = st.selectbox(
         "Select Month", df_master['month'].drop_duplicates(), key=0.1)
 
-    st.divider()
 
 col1, col2 = st.columns([8, 1], gap='large')
 with col1:

@@ -20,18 +20,18 @@ supabase: Client = create_client(url, key)
 storage_url = os.getenv("SUPABASE_STORAGE_URL")
 
 st.set_page_config(page_title="KYC Details",
-                   layout='wide', initial_sidebar_state='collapsed')
+                   layout='wide', initial_sidebar_state='expanded')
 
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     """
+# <style>
+#     [data-testid="collapsedControl"] {
+#         display: none
+#     }
+# </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 
 st.write('#### KYC Details')
 df_details = kyc_master()

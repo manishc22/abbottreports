@@ -8,18 +8,18 @@ import xlsxwriter
 
 
 st.set_page_config(page_title="KYC Overview",
-                   layout='wide', initial_sidebar_state='collapsed')
+                   layout='wide', initial_sidebar_state='expanded')
 
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     """
+# <style>
+#     [data-testid="collapsedControl"] {
+#         display: none
+#     }
+# </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 t = time.localtime()
 current_time = time.strftime("%H:%M", t)
 # st.write(f'##### As on: {date.today()}, {current_time} ')

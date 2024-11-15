@@ -18,17 +18,17 @@ supabase: Client = create_client(url, key)
 storage_url = os.getenv("SUPABASE_STORAGE_URL")
 
 st.set_page_config(page_title="Dealerboard Pictures",
-                   layout='wide', initial_sidebar_state='collapsed')
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+                   layout='wide', initial_sidebar_state='expanded')
+# st.markdown(
+#     """
+# <style>
+#     [data-testid="collapsedControl"] {
+#         display: none
+#     }
+# </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 
 df_master = master_view()
 df_master.replace("", "None", inplace=True)

@@ -4,18 +4,18 @@ import pandas as pd
 import openpyxl
 
 st.set_page_config(page_title="Payment Analysis",
-                   layout='wide', initial_sidebar_state='collapsed')
+                   layout='wide', initial_sidebar_state='expanded')
 
-st.markdown(
-    """
-<style>
-    [data-testid="collapsedControl"] {
-        display: none
-    }
-</style>
-""",
-    unsafe_allow_html=True,
-)
+# st.markdown(
+#     """
+# <style>
+#     [data-testid="collapsedControl"] {
+#         display: none
+#     }
+# </style>
+# """,
+#     unsafe_allow_html=True,
+# )
 df_raw = pd.read_excel("Sales.xlsx", sheet_name="Sheet1")
 df_zero = df_raw[df_raw["Total Payout (Rs)"] == 0]
 
