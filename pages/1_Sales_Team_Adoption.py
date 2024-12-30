@@ -84,7 +84,7 @@ while i < df_filter.shape[0]:
 
 st.write('##### Salesmen with at least 1 form filled during this cycle')
 col5, col6, col7, col8 = st.columns([1, 1, 1, 2])
-print(df_filter)
+# print(df_filter)
 with col5:
 
     st.metric(

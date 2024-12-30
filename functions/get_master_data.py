@@ -22,7 +22,7 @@ def master_view():
 
     with engine.begin() as conn:
         sql = text(
-            """select * from master_view_new where created_at > '2024-04-30' order by created_at desc
+            """select * from master_view_new where created_at > '2024-08-30' order by created_at desc
                """)
         data = pd.read_sql_query(
             sql, conn)
