@@ -44,7 +44,7 @@ with col1:
 
 with col1:
     st.metric(
-        "**:blue[Total Stores Remaining (North)]**", df_tse[df_tse['RegionName'] == 'North']['Remaining Stores'].sum())
+        "**:blue[Total Stores Remaining (North)]**", df_tse[df_tse['RegionName'] == 'NORTH']['Remaining Stores'].sum())
 
 with col2:
     st.metric(
@@ -60,7 +60,7 @@ with col2:
 
 with col3:
     st.metric(
-        "**:blue[Total Stores Remaining (South 2)]**", df_tse[df_tse['RegionName'] == 'South 2']['Remaining Stores'].sum())
+        "**:blue[Total Stores Remaining (South 2)]**", df_tse[df_tse['RegionName'] == 'SOUTH 2']['Remaining Stores'].sum())
 
 st.dataframe(df_tse,  hide_index=True,
              use_container_width=True)
@@ -76,7 +76,7 @@ with col10:
 
 with col11:
     st.metric(
-        "**:blue[Zero ISRs (North)]**", df_isr[df_isr['RegionName'] == 'North']['ISRPositionID'].count())
+        "**:blue[Zero ISRs (North)]**", df_isr[df_isr['RegionName'] == 'NORTH']['ISRPositionID'].count())
 
 with col12:
     st.metric(
